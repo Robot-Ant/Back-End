@@ -180,6 +180,7 @@ def currentCash():
         return cash
 
 def dartInfo():
+    #dart 기업고유번호와 기업명 dict return
     res = {}
     temp = {}
     with open('CORPCODE.json', 'r') as file:
