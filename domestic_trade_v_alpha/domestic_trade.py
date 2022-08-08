@@ -4,8 +4,9 @@ import datetime
 import yaml
 import logging
 import math
-import createModel as cm
-with open('config.yaml', encoding='UTF-8') as f:
+from createModel import insertOrderinfo
+
+with open('./domestic_trade_v_alpha/config.yaml', encoding='UTF-8') as f:
     _cfg = yaml.load(f, Loader=yaml.FullLoader)
 APP_KEY = _cfg['APP_KEY']
 APP_SECRET = _cfg['APP_SECRET']
@@ -184,7 +185,7 @@ def buy(code, qty):
         send_message(f"[매수 성공]{str(res.json())}")
         price = get_current_price(code)
         logger.info(f"0, {code}, {price}, {qty}")
-        cm.insertOrderinfo(order_price=price, order_kind='T', order_qty=qty, order_time=datetime.datetime.now())
+        insertOrderinfo(order_price=price, order_kind='T', order_qty=qty, order_time=datetime.datetime.now())
         return True
     else:
         send_message(f"[매수 실패]{str(res.json())}")
@@ -213,7 +214,9 @@ def sell(code, qty):
     res = requests.post(URL, headers=headers, data=json.dumps(data))
     if res.json()['rt_cd'] == '0':
         send_message(f"[매도 성공]{str(res.json())}")
-        logger.info(f"0, {code}, {get_current_price(code)}, {qty}")
+        price = get_current_price(code)
+        logger.info(f"0, {code}, {price}, {qty}")
+        insertOrderinfo(order_price=price, order_kind='F', order_qty=qty, order_time=datetime.datetime.now())
         return True
     else:
         send_message(f"[매도 실패]{str(res.json())}")
