@@ -1,11 +1,11 @@
+
 from flask import Flask, request
 from flask import render_template
 from korStock import *
 from createModel import Logininfo
 import createModel
-import json
+'''
 app = Flask(__name__)
-6
 
 @app.route('/getCash')
 def getCash():
@@ -58,3 +58,5 @@ def posttrade():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+'''

@@ -121,9 +121,3 @@ def getNo(obj, session):
     else:    
         no = row[len(row) - 1]
         return no
-
-
-aaa = insertOrderinfo()
-bbb = insertTradeinfo()
-ccc = insertLogininfo()
-print(aaa, bbb, ccc)
