@@ -3,7 +3,9 @@ from korStock import stock
 import korStock as kor
 import createModel
 
+#from domestic_trade_v_alpha import strategies
 blue_get = Blueprint('getInfo', __name__, url_prefix='/info')
+# blue_switch = Blueprint('')
 info = stock()
 @blue_get.route('/cash')
 def getCash():
