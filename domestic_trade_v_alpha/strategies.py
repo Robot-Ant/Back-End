@@ -92,7 +92,7 @@ def moving_average_swing():
                 bollinger = api.get_moving_average(sym)
     
                 # sell
-                if sym in stock_dict.keys():
+                if sym in stock_dict.keys() and sym in bought_list:
                     stock = api.get_stock_balance(False)[sym]
                     loss = float(stock['evlu_pfls_rt'])
                     if loss < -STOP_LOSS_RATIO:
@@ -158,7 +158,7 @@ def volume_power_5min_mean():
                 now_volpow = api.get_volume_power(sym)
 
                 # sell
-                if sym in stock_dict.items():
+                if sym in stock_dict.items() and sym in bought_list:
                     stock = api.get_stock_balance(False)[sym]
                     if now_volpow < volume_5min_mean[sym].mean and volume_5min_mean[sym].enough:
                         result = api.sell(sym,int(stock['hldg_qty']))
@@ -221,7 +221,7 @@ def volume_power_over_100():
                 now_volpow = api.get_volume_power(sym)
 
                 # sell
-                if sym in stock_dict.items():
+                if sym in stock_dict.items() and sym in bought_list:
                     stock = api.get_stock_balance(False)[sym]
                     if now_volpow < 100:
                         result = api.sell(sym,int(stock['hldg_qty']))
@@ -232,7 +232,7 @@ def volume_power_over_100():
                 
                 # buy
                 else:
-                    if len(stock_dict) < target_buy_count and not(sym in bought_list) and not(sym in bought_list):
+                    if len(stock_dict) < target_buy_count and not(sym in bought_list):
                         if now_volpow > 100:
                             buy_qty = 0
                             buy_qty = buy_amount//api.get_current_price(sym)
@@ -241,7 +241,7 @@ def volume_power_over_100():
                                 result = api.buy(sym, buy_qty)
                                 if result:
                                     stock_dict = api.get_stock_balance(True)
-                                    bought_list(sym)
+                                    bought_list.append(sym)
                                     time.sleep(10)
                 if t_now.minute == 30 and t_now.second <= 5: 
                     api.get_stock_balance(True)
@@ -275,24 +275,27 @@ def re_balance_portfolio():
                 new_balance = total_asset/2
                 current_price = float(api.get_current_price(symbol))
                 qty = new_balance//current_price
+                api.send_message(f"{sym}를 {current_price}에 매수를 시도합니다.")
                 result = api.buy(symbol, qty)
                 if result:
                         stock_dict = api.get_stock_balance(True)
                         bought_list.append(symbol)
                         time.sleep(10)
                         continue
-            if symbol in stock_dict.keys():
+            if symbol in stock_dict.keys() and sym in bought_list:
                 if (t_now.hour == 9 and t_now.minute == 1 and t_now.second <= 5) or (t_now.hour == 15 and t_now.minute == 15 and t_now.second <= 5) or (abs(float(stock_dict[symbol]['evlu_erng_rt'])) >= 3) :
                     new_balance = total_asset/2
                     unbalanced = new_balance - float(stock_dict[symbol]['evlu_amt'])
                     current_price = float(api.get_current_price(symbol))
                     qty = unbalanced//current_price
                     if qty < 0:
+                        api.send_message(f"리밸런싱 {-(qty+1)}주 매수를 시도합니다 새로운 균형 : {new_balance}")
                         result = api.sell(symbol, -(qty+1))
                         if result:
-                                stock_dict = api.get_stock_balance(True)
-                                time.sleep(10)
+                            stock_dict = api.get_stock_balance(True)
+                            time.sleep(10)
                     elif qty > 0:
+                        api.send_message(f"리밸런싱 {qty}주 매도를 시도합니다 새로운 균형 : {new_balance}")
                         result = api.buy(symbol, qty)
                         if result:
                                 stock_dict = api.get_stock_balance(True)
@@ -308,7 +311,7 @@ def re_balance_portfolio():
                 recordfile.write(f"{t_now.date()}-{myseed}\n")
             break
 
-strategy_code = 0
+strategy_code = 1
 
 if strategy_code == 0:
     volatility_breakthrough()

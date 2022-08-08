@@ -184,7 +184,7 @@ def buy(code, qty):
         send_message(f"[매수 성공]{str(res.json())}")
         price = get_current_price(code)
         logger.info(f"0, {code}, {price}, {qty}")
-        cm.insertOrderinfo(order_price=price, order_kind='T', order_qty=int(qty), order_time=datetime.datetime.now())
+        cm.insertOrderinfo(order_price=price, order_kind='T', order_qty=qty, order_time=datetime.datetime.now())
         return True
     else:
         send_message(f"[매수 실패]{str(res.json())}")
