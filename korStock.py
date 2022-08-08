@@ -137,6 +137,8 @@ class stock:
         print("======요청결과======")
         if errcode != "0":
             print(f"errcode:{errcode}/{msg1}")
+            print("======요청결과======")
+            return None
         else:
             stocklist = res.json()["output1"]
             evlu = res.json()["output2"]
@@ -150,7 +152,8 @@ class stock:
                 print(f"======{i}======")
                 i += 1
         print("======요청결과======")
-        return stocklist
+        # print(evlu['evlu_pfls_smtl_amt'])
+        return stocklist, evlu
 
     #현재 주문 가능 현금 조회
     def currentCash():
