@@ -21,5 +21,7 @@ def getStock():
     benefit_percent=evlu[0]['asst_icdc_erng_rt']
    # createModel.insertTradeinfo(account=account, pr_account=pr_account, order_possible_cash=order_possible_cash, benefit_percent=benefit_percent)
     #current_cash = 잔금, total_asset=총 자산, asst_icdc = 총 수익률, evlu_amt = 평가금액 총합
-    res = dict({'current_cash':order_possible_cash,'total_asset':evlu[0]['tot_evlu_amt'],'asst_icdc':evlu[0]['asst_icdc_erng_rt'], 'evlu_amt':evlu[0]['evlu_amt_smtl_amt']})
-    return jsonify({'data':res}) #(node.js 서버와 연결했을경우 적용)
+    tmp = float(evlu[0]['asst_icdc_erng_rt'])
+    asst_icdc = "%.2f"%tmp 
+    res = dict({'current_cash':order_possible_cash,'total_asset':evlu[0]['tot_evlu_amt'],'asst_icdc':asst_icdc, 'evlu_amt':evlu[0]['evlu_amt_smtl_amt']})
+    return res #(node.js 서버와 연결했을경우 적용)
