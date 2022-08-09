@@ -2,6 +2,7 @@ from flask import Blueprint, make_response, request, Response
 from korStock import stock
 import korStock as kor
 from domestic_trade_v_alpha import domestic_trade
+import time
 import json
 #import createModel
 
@@ -16,6 +17,7 @@ def getCash():
 def getStock():
     # json으로 리턴 수정(미완)
     # 현재 소지한 주식을 조회힐때마다 DB에 저장
+    time.sleep(10)
     stockInf = ''
     res = ''
 
