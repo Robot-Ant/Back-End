@@ -22,6 +22,10 @@ def getStock():
    # createModel.insertTradeinfo(account=account, pr_account=pr_account, order_possible_cash=order_possible_cash, benefit_percent=benefit_percent)
     #current_cash = 잔금, total_asset=총 자산, asst_icdc = 총 수익률, evlu_amt = 평가금액 총합
     tmp = float(evlu[0]['asst_icdc_erng_rt'])
-    asst_icdc = "%.2f"%tmp 
-    res = dict({'current_cash':order_possible_cash,'total_asset':evlu[0]['tot_evlu_amt'],'asst_icdc':asst_icdc, 'evlu_amt':evlu[0]['evlu_amt_smtl_amt']})
+    asst_icdc = "%.2f"%tmp
+    tt_asset = int(evlu[0]['tot_evlu_amt'])
+    tt_asset = format(tt_asset, ',')
+    ev_am = int(evlu[0]['evlu_amt_smtl_amt'])
+    ev_am = format(ev_am, ',')
+    res = dict({'current_cash':order_possible_cash,'total_asset':tt_asset, 'asst_icdc':float(asst_icdc), 'evlu_amt':ev_am})
     return res #(node.js 서버와 연결했을경우 적용)
