@@ -1,18 +1,18 @@
-from flask import Blueprint
+from flask import Blueprint, make_response
 from korStock import stock
 import korStock as kor
-from domestic_trade_v_alpha import domestic_trade
+#from domestic_trade_v_alpha import domestic_trade
 import createModel
-
 #from domestic_trade_v_alpha import strategies
+
 blue_get = Blueprint('getInfo', __name__, url_prefix='/info')
-# blue_switch = Blueprint('')
 info = stock()
-@blue_get.route('/cash')
+@blue_get.route('/cash', methods=['GET'])
 def getCash():
     #cash = domestic_trade.get_balance()
     cash = stock.currentCash()
     return str(cash)
+
 
 @blue_get.route('/stock')
 def getStock():
