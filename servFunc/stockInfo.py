@@ -2,6 +2,7 @@ from flask import Blueprint, make_response, request, Response
 from korStock import stock
 import korStock as kor
 from domestic_trade_v_alpha import domestic_trade
+import json
 #import createModel
 
 blue_get = Blueprint('getInfo', __name__, url_prefix='/info')
@@ -26,4 +27,4 @@ def getStock():
    # createModel.insertTradeinfo(account=account, pr_account=pr_account, order_possible_cash=order_possible_cash, benefit_percent=benefit_percent)
     #total_asset=총 자산, asst_icdc = 총 수익률, evlu_amt = 평가금액 총합
     res = dict({'total_asset':evlu[0]['tot_evlu_amt'],'asst_icdc':evlu[0]['asst_icdc_erng_rt'], 'evlu_amt':evlu[0]['evlu_amt_smtl_amt']})
-    return res #(node.js 서버와 연결했을경우 적용)
+    return json.dumps(res) #(node.js 서버와 연결했을경우 적용)
