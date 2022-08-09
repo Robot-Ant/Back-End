@@ -1,7 +1,7 @@
 from flask import Blueprint
 from domestic_trade_v_alpha import strategies
 
-blue_switch = Blueprint('strategiy switch', __name__, url_prefix='strat')
+blue_switch = Blueprint('strategiy switch', __name__, url_prefix='/strat')
 code = strategies.switch()
 
 @blue_switch.route('/vola')
