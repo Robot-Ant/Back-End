@@ -73,8 +73,11 @@ def get_current_price(code):
     "fid_cond_mrkt_div_code":"J",
     "fid_input_iscd":code,
     }
-    res = requests.get(URL, headers=headers, params=params)
-    return int(res.json()['output']['stck_prpr'])
+    try:
+        res = requests.get(URL, headers=headers, params=params)
+        return float(res.json()['output']['stck_prpr'])
+    except:
+        return -1
 
 def get_target_price(code="005930"):
     """변동성 돌파 전략으로 매수 목표가 조회"""
@@ -92,9 +95,9 @@ def get_target_price(code="005930"):
     "fid_period_div_code":"D"
     }
     res = requests.get(URL, headers=headers, params=params)
-    stck_oprc = int(res.json()['output'][0]['stck_oprc']) #오늘 시가
-    stck_hgpr = int(res.json()['output'][1]['stck_hgpr']) #전일 고가
-    stck_lwpr = int(res.json()['output'][1]['stck_lwpr']) #전일 저가
+    stck_oprc = float(res.json()['output'][0]['stck_oprc']) #오늘 시가
+    stck_hgpr = float(res.json()['output'][1]['stck_hgpr']) #전일 고가
+    stck_lwpr = float(res.json()['output'][1]['stck_lwpr']) #전일 저가
     target_price = stck_oprc + (stck_hgpr - stck_lwpr) * 0.5
     return target_price
 
@@ -122,17 +125,20 @@ def get_stock_balance(message):
         "CTX_AREA_FK100": "",
         "CTX_AREA_NK100": ""
     }
-    res = requests.get(URL, headers=headers, params=params)
-    stock_list = res.json()['output1']
-    evaluation = res.json()['output2']
-    stock_dict = { data['pdno']:data  for data in stock_list if int(data['hldg_qty']) > 0  }
-    if message:
-        send_message(f"====주식 보유잔고====")
-        send_message(f"주식 평가 금액: {evaluation[0]['scts_evlu_amt']}원")
-        send_message(f"평가 손익 합계: {evaluation[0]['evlu_pfls_smtl_amt']}원")
-        send_message(f"총 평가 금액: {evaluation[0]['tot_evlu_amt']}원")
-        send_message(f"=================")
-    return stock_dict
+    try:
+        res = requests.get(URL, headers=headers, params=params)
+        stock_list = res.json()['output1']
+        evaluation = res.json()['output2']
+        stock_dict = { data['pdno']:data  for data in stock_list if int(data['hldg_qty']) > 0  }
+        if message:
+            send_message(f"====주식 보유잔고====")
+            send_message(f"주식 평가 금액: {evaluation[0]['scts_evlu_amt']}원")
+            send_message(f"평가 손익 합계: {evaluation[0]['evlu_pfls_smtl_amt']}원")
+            send_message(f"총 평가 금액: {evaluation[0]['tot_evlu_amt']}원")
+            send_message(f"=================")
+        return stock_dict
+    except:
+        return -1
 
 def get_balance(message):
     """현금 잔고조회"""
@@ -158,7 +164,7 @@ def get_balance(message):
     cash = res.json()['output']['ord_psbl_cash']
     if message:
         send_message(f"주문 가능 현금 잔고: {cash}원")
-    return int(cash)
+    return float(cash)
 
 def buy(code, qty):
     """주식 시장가 매수"""  
@@ -169,7 +175,7 @@ def buy(code, qty):
         "ACNT_PRDT_CD": ACNT_PRDT_CD,
         "PDNO": code,
         "ORD_DVSN": "01",
-        "ORD_QTY": str(int(qty)),
+        "ORD_QTY": str(qty),
         "ORD_UNPR": "0",
     }
     headers = {"Content-Type":"application/json", 
@@ -200,7 +206,7 @@ def sell(code, qty):
         "ACNT_PRDT_CD": ACNT_PRDT_CD,
         "PDNO": code,
         "ORD_DVSN": "01",
-        "ORD_QTY": qty,
+        "ORD_QTY": str(qty),
         "ORD_UNPR": "0",
     }
     headers = {"Content-Type":"application/json", 
@@ -238,11 +244,14 @@ def get_target_price(code):
     "fid_period_div_code":"D"
     }
     res = requests.get(URL, headers=headers, params=params)
-    stck_oprc = int(res.json()['output'][0]['stck_oprc']) #오늘 시가
-    stck_hgpr = int(res.json()['output'][1]['stck_hgpr']) #전일 고가
-    stck_lwpr = int(res.json()['output'][1]['stck_lwpr']) #전일 저가
-    target_price = stck_oprc + (stck_hgpr - stck_lwpr)/2
-    return target_price
+    try:
+        stck_oprc = float(res.json()['output'][0]['stck_oprc']) #오늘 시가
+        stck_hgpr = float(res.json()['output'][1]['stck_hgpr']) #전일 고가
+        stck_lwpr = float(res.json()['output'][1]['stck_lwpr']) #전일 저가
+        target_price = stck_oprc + (stck_hgpr - stck_lwpr)/2
+        return target_price
+    except:
+        return -1
 
 def get_evaluation():
     PATH = "uapi/domestic-stock/v1/trading/inquire-balance"

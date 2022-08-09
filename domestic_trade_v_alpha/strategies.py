@@ -1,6 +1,6 @@
 import datetime
-import domestic_trade as api
-from time_mean import time_mean
+from domestic_trade_v_alpha import domestic_trade as api
+from domestic_trade_v_alpha import time_mean
 import time
 
 def volatility_breakthrough():
@@ -53,7 +53,7 @@ def volatility_breakthrough():
                                 if result:
                                     stock_dict = api.get_stock_balance(True)
                                     bought_list.append(sym)
-                                    time.sleep(10)
+                                    time.sleep(0.11)
             if t_now.minute == 30 and t_now.second <= 5: 
                 api.get_stock_balance(True)
         if t_sell < t_now < t_exit:  # PM 03:15 ~ PM 03:20 : 일괄 매도
@@ -311,7 +311,7 @@ def re_balance_portfolio():
                 recordfile.write(f"{t_now.date()}-{myseed}\n")
             break
 
-strategy_code = 1
+strategy_code = 0
 
 if strategy_code == 0:
     volatility_breakthrough()
