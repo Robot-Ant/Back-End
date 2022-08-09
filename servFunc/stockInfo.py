@@ -20,12 +20,25 @@ def getStock():
     order_possible_cash = domestic_trade.get_balance()
     benefit_percent=evlu[0]['asst_icdc_erng_rt']
    # createModel.insertTradeinfo(account=account, pr_account=pr_account, order_possible_cash=order_possible_cash, benefit_percent=benefit_percent)
-    #current_cash = 잔금, total_asset=총 자산, asst_icdc = 총 수익률, evlu_amt = 평가금액 총합
+    #current_cash = 잔금, total_asset=총 자산, asst_icdc = 총 수익률, evlu_amt = 평가금액 총합, evlu_ratio = 평가손익율
     tmp = float(evlu[0]['asst_icdc_erng_rt'])
     asst_icdc = "%.2f"%tmp
     tt_asset = int(evlu[0]['tot_evlu_amt'])
     tt_asset = format(tt_asset, ',')
     ev_am = int(evlu[0]['evlu_amt_smtl_amt'])
     ev_am = format(ev_am, ',')
-    res = dict({'current_cash':order_possible_cash,'total_asset':tt_asset, 'asst_icdc':float(asst_icdc), 'evlu_amt':ev_am})
+    evlu_ratio = sumevlu(stockInf)
+    evlu_ratio *= 100
+    evlu_ratio = "%.2f"%evlu_ratio
+    res = dict({'current_cash':order_possible_cash,'total_asset':tt_asset, 'asst_icdc':float(asst_icdc), 'evlu_amt':ev_am, 'evlu_ratio':float(evlu_ratio)})
     return res #(node.js 서버와 연결했을경우 적용)
+
+def sumevlu(stockInf):
+    res_sum = 0
+    res_profit = 0
+    res = 0.0
+    for key, stock in stockInf.items():
+        res_profit += float(stock['evlu_pfls_amt'])
+        res_sum += int(stock['pchs_amt'])
+    res = res_profit / res_sum
+    return res    

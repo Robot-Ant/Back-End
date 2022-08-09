@@ -6,7 +6,7 @@ import logging
 import math
 import time
 
-with open('config.yaml', encoding='UTF-8') as f:
+with open('domestic_trade_v_alpha/config.yaml', encoding='UTF-8') as f:
     _cfg = yaml.load(f, Loader=yaml.FullLoader)
 APP_KEY = _cfg['APP_KEY']
 APP_SECRET = _cfg['APP_SECRET']
@@ -134,7 +134,7 @@ def get_stock_balance(message=False):
         send_message(f"평가 손익 합계: {evaluation[0]['evlu_pfls_smtl_amt']}원")
         send_message(f"총 평가 금액: {evaluation[0]['tot_evlu_amt']}원")
         send_message(f"=================")
-    return stock_dict
+    return stock_dict, evaluation
 
 def get_balance(message=False):
     """현금 잔고조회"""
