@@ -47,7 +47,7 @@ class stratege:
                             current_price = api.get_current_price(sym)
                             if target_price < current_price:
                                 buy_qty = 0  # 매수할 수량 초기화
-                                buy_qty = int(buy_amount//current_price)
+                                buy_qty = buy_amount//current_price
                                 if buy_qty > 0:
                                     api.send_message(f"{sym} 목표가 달성({target_price} < {current_price}) 매수를 시도합니다.")
                                     result = api.buy(sym, buy_qty)
@@ -147,6 +147,7 @@ class stratege:
                 api.send_message("주말이므로 프로그램을 종료합니다.")
                 break
             if t_9 < t_now < t_exit:  # AM 09:00 ~ PM 03:15 : 매수
+                
                 # update volume mean
                 if t_now.second <= 5:
                     for sym in symbol_list:

@@ -3,11 +3,10 @@ import json
 import datetime
 import yaml
 import logging
-import time
 import math
-from createModel import insertOrderinfo
+import time
 
-with open('./domestic_trade_v_alpha/config.yaml', encoding='UTF-8') as f:
+with open('config.yaml', encoding='UTF-8') as f:
     _cfg = yaml.load(f, Loader=yaml.FullLoader)
 APP_KEY = _cfg['APP_KEY']
 APP_SECRET = _cfg['APP_SECRET']
@@ -74,7 +73,6 @@ def get_current_price(code):
     "fid_cond_mrkt_div_code":"J",
     "fid_input_iscd":code,
     }
-    time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
     return float(res.json()['output']['stck_prpr'])
 
@@ -93,6 +91,7 @@ def get_target_price(code="005930"):
     "fid_org_adj_prc":"1",
     "fid_period_div_code":"D"
     }
+    time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
     stck_oprc = float(res.json()['output'][0]['stck_oprc']) #오늘 시가
     stck_hgpr = float(res.json()['output'][1]['stck_hgpr']) #전일 고가
@@ -124,6 +123,7 @@ def get_stock_balance(message=False):
         "CTX_AREA_FK100": "",
         "CTX_AREA_NK100": ""
     }
+    time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
     stock_list = res.json()['output1']
     evaluation = res.json()['output2']
@@ -134,7 +134,7 @@ def get_stock_balance(message=False):
         send_message(f"평가 손익 합계: {evaluation[0]['evlu_pfls_smtl_amt']}원")
         send_message(f"총 평가 금액: {evaluation[0]['tot_evlu_amt']}원")
         send_message(f"=================")
-    return stock_dict, evaluation
+    return stock_dict
 
 def get_balance(message=False):
     """현금 잔고조회"""
@@ -156,6 +156,7 @@ def get_balance(message=False):
         "CMA_EVLU_AMT_ICLD_YN": "Y",
         "OVRS_ICLD_YN": "Y"
     }
+    time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
     cash = res.json()['output']['ord_psbl_cash']
     if message:
@@ -171,7 +172,7 @@ def buy(code, qty):
         "ACNT_PRDT_CD": ACNT_PRDT_CD,
         "PDNO": code,
         "ORD_DVSN": "01",
-        "ORD_QTY": str(qty),
+        "ORD_QTY": str(int(qty)),
         "ORD_UNPR": "0",
     }
     headers = {"Content-Type":"application/json", 
@@ -185,9 +186,7 @@ def buy(code, qty):
     res = requests.post(URL, headers=headers, data=json.dumps(data))
     if res.json()['rt_cd'] == '0':
         send_message(f"[매수 성공]{str(res.json())}")
-        price = get_current_price(code)
-        logger.info(f"0, {code}, {price}, {qty}")
-        insertOrderinfo(order_price=price, order_kind='T', order_qty=qty, order_time=datetime.datetime.now())
+        logger.info(f"0, {code}, {get_current_price(code)}, {qty}")
         return True
     else:
         send_message(f"[매수 실패]{str(res.json())}")
@@ -216,9 +215,7 @@ def sell(code, qty):
     res = requests.post(URL, headers=headers, data=json.dumps(data))
     if res.json()['rt_cd'] == '0':
         send_message(f"[매도 성공]{str(res.json())}")
-        price = get_current_price(code)
-        logger.info(f"0, {code}, {price}, {qty}")
-        insertOrderinfo(order_price=price, order_kind='F', order_qty=qty, order_time=datetime.datetime.now())
+        logger.info(f"0, {code}, {get_current_price(code)}, {qty}")
         return True
     else:
         send_message(f"[매도 실패]{str(res.json())}")
@@ -239,6 +236,7 @@ def get_target_price(code):
     "fid_org_adj_prc":"1",
     "fid_period_div_code":"D"
     }
+    time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
     stck_oprc = float(res.json()['output'][0]['stck_oprc']) #오늘 시가
     stck_hgpr = float(res.json()['output'][1]['stck_hgpr']) #전일 고가
@@ -269,6 +267,7 @@ def get_evaluation():
         "CTX_AREA_FK100": "",
         "CTX_AREA_NK100": ""
     }
+    time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
     evaluation = res.json()['output2']
     send_message(f"[나의 자산]{str(evaluation[0]['nass_amt'])}")
@@ -290,13 +289,14 @@ def get_moving_average(code):
         "fid_org_adj_prc": "0000000000",
         "fid_period_div_code": "D"
     }
+    time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
     last_20d = res.json()['output']
     sum = 0
     sqrsum = 0
     for i in range(20):
         sum += float(last_20d[i]['stck_clpr'])
-        sqrsum += pow(float(last_20d[i]['stck_hgpr']),2)
+        sqrsum += pow(float(last_20d[i]['stck_clpr']),2)
     m = sum/20
     s = math.sqrt(sqrsum/20-pow(m,2))
     return (m,s)
@@ -315,6 +315,7 @@ def get_volume_power(code):
         "tr_id":"H0STCNI0",
         "tr_key":"005930"
     }
+    time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
     return float(res.json()['output'][0]['tday_rltv'])
 
@@ -335,4 +336,3 @@ def get_ordered(code):
     }
     res = requests.get(URL,headers=headers,bodys=body)
     return res.json()
-
