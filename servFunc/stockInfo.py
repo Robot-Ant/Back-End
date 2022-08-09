@@ -2,7 +2,7 @@ from flask import Blueprint, make_response, request, Response
 from korStock import stock
 import korStock as kor
 from domestic_trade_v_alpha import domestic_trade
-import createModel
+#import createModel
 
 blue_get = Blueprint('getInfo', __name__, url_prefix='/info')
 info = stock()
@@ -16,18 +16,14 @@ def getStock():
     # json으로 리턴 수정(미완)
     # 현재 소지한 주식을 조회힐때마다 DB에 저장
     stockInf = ''
-    """
-    stockInf, evlu = stock.checkStock()
-    account = kor.CANO
-    pr_account = kor.ACNT_PRDT_CD
-    order_possible_cash = stock.currentCash()
-    benefit_percent = evlu[0]['asst_icdc_erng_rt']
-    """
+    res = ''
+
     stockInf, evlu = domestic_trade.get_stock_balance()
     account = domestic_trade.CANO
     pr_account = domestic_trade.ACNT_PRDT_CD
     order_possible_cash = domestic_trade.get_balance()
     benefit_percent=evlu[0]['asst_icdc_erng_rt']
-    createModel.insertTradeinfo(account=account, pr_account=pr_account, order_possible_cash=order_possible_cash, benefit_percent=benefit_percent)
-
-    return stockInf #(node.js 서버와 연결했을경우 적용)
+   # createModel.insertTradeinfo(account=account, pr_account=pr_account, order_possible_cash=order_possible_cash, benefit_percent=benefit_percent)
+    #current_cash = 잔금, asst_icdc = 총 수익률, evlu_amt = 평가금액 총합
+    res = dict({'current_cash':order_possible_cash,'asst_icdc':evlu[0]['asst_icdc_erng_rt'], 'evlu_amt':evlu[0]['evlu_amt_smtl_amt']})
+    return res #(node.js 서버와 연결했을경우 적용)
