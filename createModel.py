@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import text, select
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import MetaData
 from sqlalchemy import Table, Column, Integer, String, DateTime, Float
 from sqlalchemy.orm import Session
