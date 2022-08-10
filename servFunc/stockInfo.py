@@ -32,7 +32,7 @@ def getStock():
     evlu_ratio *= 100
     evlu_ratio = "%.2f"%evlu_ratio
     res = dict({'current_cash':order_possible_cash,'total_asset':tt_asset, 'asst_icdc':float(asst_icdc), 'evlu_amt':ev_am, 'evlu_ratio':float(evlu_ratio), 'a':evlu[0]['asst_icdc_amt']})
-    return list[res] #(node.js 서버와 연결했을경우 적용)
+    return res #(node.js 서버와 연결했을경우 적용)
 
 def sumevlu(stockInf):
     res_sum = 0
