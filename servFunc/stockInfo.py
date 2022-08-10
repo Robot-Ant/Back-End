@@ -2,6 +2,7 @@ from flask import Blueprint, make_response, request, Response, jsonify
 from korStock import stock
 import korStock as kor
 from domestic_trade_v_alpha import domestic_trade
+from datetime import datetime
 #import createModel
 
 blue_get = Blueprint('getInfo', __name__, url_prefix='/info')
@@ -30,8 +31,8 @@ def getStock():
     evlu_ratio = sumevlu(stockInf)
     evlu_ratio *= 100
     evlu_ratio = "%.2f"%evlu_ratio
-    res = dict({'current_cash':order_possible_cash,'total_asset':tt_asset, 'asst_icdc':float(asst_icdc), 'evlu_amt':ev_am, 'evlu_ratio':float(evlu_ratio)})
-    return res #(node.js 서버와 연결했을경우 적용)
+    res = dict({'current_cash':order_possible_cash,'total_asset':tt_asset, 'asst_icdc':float(asst_icdc), 'evlu_amt':ev_am, 'evlu_ratio':float(evlu_ratio), 'a':evlu[0]['asst_icdc_amt']})
+    return list[res] #(node.js 서버와 연결했을경우 적용)
 
 def sumevlu(stockInf):
     res_sum = 0
@@ -42,3 +43,4 @@ def sumevlu(stockInf):
         res_sum += int(stock['pchs_amt'])
     res = res_profit / res_sum
     return res    
+
