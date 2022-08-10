@@ -29,9 +29,12 @@ def getStock():
     ev_am = int(evlu[0]['evlu_amt_smtl_amt'])
     ev_am = format(ev_am, ',')
     evlu_ratio = sumevlu(stockInf)
-    evlu_ratio *= 100
+    if evlu_ratio == -1:
+        evlu_ratio = 0
+    else:
+        evlu_ratio *= 100 
     evlu_ratio = "%.2f"%evlu_ratio
-    res = dict({'current_cash':order_possible_cash,'total_asset':tt_asset, 'asst_icdc':float(asst_icdc), 'evlu_amt':ev_am, 'evlu_ratio':float(evlu_ratio), 'a':evlu[0]['asst_icdc_amt']})
+    res = dict({'current_cash':order_possible_cash,'total_asset':tt_asset, 'asst_icdc':float(asst_icdc), 'evlu_amt':ev_am, 'evlu_ratio':float(evlu_ratio)})
     return res #(node.js 서버와 연결했을경우 적용)
 
 def sumevlu(stockInf):
