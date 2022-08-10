@@ -41,6 +41,9 @@ def sumevlu(stockInf):
     for key, stock in stockInf.items():
         res_profit += float(stock['evlu_pfls_amt'])
         res_sum += int(stock['pchs_amt'])
-    res = res_profit / res_sum
-    return res    
+    try:
+        res = res_profit / res_sum
+        return res
+    except ZeroDivisionError:
+        return -1    
 
