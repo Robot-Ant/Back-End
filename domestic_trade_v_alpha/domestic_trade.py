@@ -99,7 +99,7 @@ def get_target_price(code="005930"):
     target_price = stck_oprc + (stck_hgpr - stck_lwpr) * 0.5
     return target_price
 
-def get_stock_balance(message):
+def get_stock_balance(message=False):
     """주식 잔고조회"""
     PATH = "uapi/domestic-stock/v1/trading/inquire-balance"
     URL = f"{URL_BASE}/{PATH}"
@@ -136,7 +136,7 @@ def get_stock_balance(message):
         send_message(f"=================")
     return stock_dict, evaluation
 
-def get_balance(message):
+def get_balance(message=False):
     """현금 잔고조회"""
     PATH = "uapi/domestic-stock/v1/trading/inquire-psbl-order"
     URL = f"{URL_BASE}/{PATH}"
