@@ -99,7 +99,7 @@ def get_target_price(code="005930"):
     target_price = stck_oprc + (stck_hgpr - stck_lwpr) * 0.5
     return target_price
 
-def get_stock_balance(message=False):
+def get_stock_balance(message):
     """주식 잔고조회"""
     PATH = "uapi/domestic-stock/v1/trading/inquire-balance"
     URL = f"{URL_BASE}/{PATH}"
@@ -132,11 +132,11 @@ def get_stock_balance(message=False):
         send_message(f"====주식 보유잔고====")
         send_message(f"주식 평가 금액: {evaluation[0]['scts_evlu_amt']}원")
         send_message(f"평가 손익 합계: {evaluation[0]['evlu_pfls_smtl_amt']}원")
-        send_message(f"총 평가 금액: {evaluation[0]['tot_evlu_amt']}원")
+        send_message(f"총 자산 금액: {evaluation[0]['tot_evlu_amt']}원")
         send_message(f"=================")
     return stock_dict, evaluation
 
-def get_balance(message=False):
+def get_balance(message):
     """현금 잔고조회"""
     PATH = "uapi/domestic-stock/v1/trading/inquire-psbl-order"
     URL = f"{URL_BASE}/{PATH}"
@@ -312,8 +312,8 @@ def get_volume_power(code):
         "custtype":"P",
     }
     params = {
-        "tr_id":"H0STCNI0",
-        "tr_key":"005930"
+        "FID_INPUT_ISCD":code,
+        "FID_COND_MRKT_DIV_CODE":"J"
     }
     time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
@@ -336,3 +336,87 @@ def get_ordered(code):
     }
     res = requests.get(URL,headers=headers,bodys=body)
     return res.json()
+
+def get_monthly_asset():
+    monthly_data = [{"date" : [],"asset_vb":[],"asset_rbp":[]},{"date" : [],"asset_mas":[]}]
+    with open("vb_record.log",'r') as record:
+        while True:
+            data = record.readline().split()
+            if len(data) != 10:
+                break
+            if data[0][4:6] in monthly_data[0]["date"]:
+                monthly_data[0]["asset_vb"][monthly_data[0]["date"].index(data[0][4:6])] = int(float(data[9]))
+            else:
+                monthly_data[0]["date"].append(data[0][4:6])
+                monthly_data[0]["asset_vb"].append(int(float(data[9])))
+    with open("rbp_record.log",'r') as record:
+        while True:
+            data = record.readline().split()
+            if len(data) != 10:
+                break
+            if monthly_data[0]["date"].index(data[0][4:6]) >= len(monthly_data[0]["asset_rbp"]) :
+                monthly_data[0]["asset_rbp"].append(int(float(data[9])))
+            else:
+                monthly_data[0]["asset_rbp"][monthly_data[0]["date"].index(data[0][4:6])] = int(float(data[9]))
+    with open("mas_record.log",'r') as record:
+        while True:
+            data = record.readline().split()
+            if len(data) != 10:
+                break
+            if data[0][4:6] in monthly_data[1]["date"]:
+                monthly_data[1]["asset_mas"][monthly_data[1]["date"].index(data[0][4:6])] = int(float(data[9]))
+            else:
+                monthly_data[1]["date"].append(data[0][4:6])
+                monthly_data[1]["asset_mas"].append(int(float(data[9])))
+    return monthly_data
+
+def get_moving_average(code,index):
+    PATH = "uapi/domestic-stock/v1/trading/inquire-balance"
+    URL = f"{URL_BASE}/{PATH}"
+    headers = {"Content-Type":"application/json", 
+        "authorization":f"Bearer {ACCESS_TOKEN}",
+        "appKey":APP_KEY,
+        "appSecret":APP_SECRET,
+        "tr_id":"FHKST01010400",
+        "custtype":"P",
+        "tr_cont":"N"
+    }
+    params = {
+        "fid_cond_mrkt_div_code": "J",
+        "fid_input_iscd": code,
+        "fid_org_adj_prc": "0000000000",
+        "fid_period_div_code": "M"
+    }
+    time.sleep(0.11)
+    res = requests.get(URL, headers=headers, params=params)
+    datas = res.json()['output2']
+    sum = 0
+    sqr_sum = 0
+    for i in range(index,index+20):
+        sum += float(datas[i]['stck_clpr'])
+        sqr_sum += pow(float(datas[i]['stck_clpr']),2)
+    m = sum/20
+    s = math.sqrt(sqr_sum/20 - pow(m,2))
+    return (m,s)
+
+def get_past_datas(code):
+    PATH = "uapi/domestic-stock/v1/trading/inquire-balance"
+    URL = f"{URL_BASE}/{PATH}"
+    headers = {"Content-Type":"application/json", 
+        "authorization":f"Bearer {ACCESS_TOKEN}",
+        "appKey":APP_KEY,
+        "appSecret":APP_SECRET,
+        "tr_id":"FHKST03010100",
+        "custtype":"P",
+    }
+    params = {
+        "fid_cond_mrkt_div_code": "J",
+        "fid_input_date_1": "20220110",
+        "fid_input_date_2": "20220810",
+        "fid_input_iscd": code,
+        "fid_org_adj_prc": "0",
+        "fid_period_div_code": "D" 
+    }
+    time.sleep(0.11)
+    res = requests.get(URL, headers=headers, params=params)
+    return res.json()['output2']

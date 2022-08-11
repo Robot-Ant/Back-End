@@ -1,40 +1,62 @@
+import threading
 from flask import Blueprint
 from domestic_trade_v_alpha import strategies
+from domestic_trade_v_alpha.strategies import Rebal, Vp, Vola, Mas
 
 blue_switch = Blueprint('strategiy switch', __name__, url_prefix='/strat')
 code = strategies.switch()
-strategy = strategies.stratege()
+tmp = '' # instance object save
+
+@blue_switch.route('/stop')
+def stop():
+    for i in threading.enumerate():
+        if i.name == 'vola':
+            tmp.stop()
+            return '0'
+        if i.name == 'rebal':
+            tmp.stop()
+            return '0'
+        if i.name == 'vp':
+            tmp.stop()
+            return '0'
+        if i.name == 'mas':
+            tmp.stop()
+            return '0'
+    return '-1'
 
 @blue_switch.route('/vola')
 def selectVola():
-    code.strategy_code = 0
-    if code.strategy_code == 0:
-        strategy.allSell()
-        strategy.volatility_breakthrough()
-    else:
-        return -1
+    stop()
+    vo = Vola(name='vola')
+    vo.start()
+    global tmp
+    tmp = vo
+    return '0'
 
 @blue_switch.route('/rebal')
 def selectRebal():
-    code.strategy_code = 1
-    if code.strategy_code == 1:
-        strategy.allSell()
-        strategy.re_balance_portfolio()
-    else:
-        return -1
-@blue_switch.route('/VP5')
+    stop()
+    re = Rebal(name='rebal')
+    re.start()
+    global tmp
+    tmp = re
+    return '0'
+
+
+@blue_switch.route('/vp')
 def selectVP():
-    code.strategy_code = 2
-    if code.strategy_code == 2:
-        strategy.allSell()
-        strategy.volume_power_5min_mean()
-    else:
-        return -1
-@blue_switch.route('/moveAve')
+    stop()
+    vp = Vp(name='vp')
+    vp.start()
+    global tmp
+    tmp = vp
+    return '0'
+
+@blue_switch.route('/mas')
 def selectMoveAve():
-    code.strategy_code = 3
-    if code.strategy_code == 3:
-        strategy.allSell()
-        strategy.moving_average_swing()
-    else:
-        return -1
+    stop()
+    mas = Mas(name='mas')
+    mas.start()
+    global tmp
+    tmp = mas
+    return '0'
