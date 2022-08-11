@@ -48,3 +48,17 @@ def back_test_rbp(code):
         
     return monthly_data
 
+def data_packing():
+    vb = back_test_vb("005930")
+    rbp = back_test_rbp("005930")
+    month = {"03":"March","04":"April","05":"May","06":"June","07":"July","08":"August"}
+    date = []
+    asset_vb = []
+    asset_rbp = []
+    for key, value in vb.items():
+        date.append(month[key])
+        asset_vb.append(value)
+    for key, value in rbp.items():
+        asset_rbp.append(value)
+    result = {"date":date, "asset_vb":asset_vb, "asset_rbp":asset_rbp}
+    return result

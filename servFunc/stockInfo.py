@@ -13,14 +13,9 @@ import xml.etree.ElementTree as ET
 blue_get = Blueprint('getInfo', __name__, url_prefix='/info')
 info = stock()
 
-@blue_get.route('/backrebal')
+@blue_get.route('/backdata')
 def getbackrebal():
-    data = practice.back_test_rbp('005930')
-    return data
-
-@blue_get.route('/backvp')
-def getbackvp():
-    data = practice.back_test_vb('005930')
+    data = practice.data_packing()
     return data
 
 @blue_get.route('/stock')
