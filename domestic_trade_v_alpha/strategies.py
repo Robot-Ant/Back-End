@@ -5,10 +5,10 @@ import time
 
 class stratege:
     # 생성자에 가변인자 넣어서 리스트 받을 수 있겠끔 수정 필 **
-    def __init__(self):
+    def __init__(self, flag=True):
         tmp_sym = ["005930","035720","000660","005380","035420","003550","015760"]
         self.symbol_list = switch.switchSub(tmp_sym)
-    
+        self.flag = flag
     def allSell(self): # 소지 주식 전량 매도
         symbol_list = self.symbol_list
         stock_list, a = api.get_stock_balance()
@@ -38,7 +38,7 @@ class stratege:
             bought_list.append(sym)
         STOP_LOSS_RATIO = 2
 
-        while True:
+        while self.flag:
             t_now = datetime.datetime.now()
             t_9 = t_now.replace(hour=9, minute=0, second=0, microsecond=0)
             t_start = t_now.replace(hour=9, minute=5, second=0, microsecond=0)
@@ -55,7 +55,6 @@ class stratege:
                     bought_list.remove(sym)
             if t_start < t_now < t_sell :  # AM 09:05 ~ PM 03:15 : 매수
                 for sym in symbol_list:
-  
                     if sym in stock_dict.keys():
                         stock, i = api.get_stock_balance(False)
                         stock = stock[sym]
