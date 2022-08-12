@@ -15,12 +15,8 @@ info = stock()
 
 @blue_get.route('/tabledata')
 def gettabledata():
-    res = {}
     temp = domestic_trade.getTableInfo()
-    for i in range(0, len(temp)-1):
-        tmp = temp[i]
-        res.setdefault(i,tmp)
-    return res
+    return jsonify(temp)
 
 @blue_get.route('/backdata')
 def getbackrebal():
