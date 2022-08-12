@@ -13,6 +13,11 @@ import xml.etree.ElementTree as ET
 blue_get = Blueprint('getInfo', __name__, url_prefix='/info')
 info = stock()
 
+@blue_get.route('/tabledata')
+def gettabledata():
+    res = domestic_trade.getTableInfo()
+    return res
+
 @blue_get.route('/backdata')
 def getbackrebal():
     data = practice.data_packing()

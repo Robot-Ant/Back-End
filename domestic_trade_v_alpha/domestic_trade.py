@@ -1,3 +1,4 @@
+import threading
 import requests
 import json
 import yaml
@@ -29,6 +30,7 @@ def get_access_token():
 
 ACCESS_TOKEN = get_access_token()
 
+lock = threading.Lock()
 
 logger= logging.getLogger('transation')
 logger.setLevel(logging.INFO)
@@ -39,6 +41,17 @@ logger.addHandler(stream_handler)
 file_handler = logging.FileHandler('transation.log')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
+
+def getlogdata():
+    data = []
+    lock.acquire()
+    with open('transation.log', 'r') as file:
+       while True:
+        data.append(file.readline())
+        if not file.readline():
+            break
+    lock.release()
+    return data
 
 def send_message(msg):
     """디스코드 메세지 전송"""
@@ -422,9 +435,37 @@ def get_past_datas(code):
     return res.json()['output2']
 
 def getTableInfo():
-    nowTime = time.localtime(time.time())
-    now_mon = nowTime.tm_mon
-    now_date = nowTime.tm_mday
-    print(now_mon,'/',now_date,sep=(''))
-
-#getTableInfo()
+    data = getlogdata()
+    res = []
+    now_time = time.localtime()
+    mon = now_time.tm_mon
+    mon = '{0:0>2}'.format(mon)
+    day = now_time.tm_mday
+    current_day = f'{mon}-{day}'
+    #{date:'08-06', time:159, mesu:6.0, code:24, price:4.0, count:5}
+    for i in data:
+        if i == '':
+            break
+        dt, ms ,code, pr, qt = i.split(',')
+        da, tim = dt.split()
+        da = da[5:len(da)]
+        if da != current_day:
+            continue
+        j, ti = ms.split('-')
+        if ti == '0':
+            ti = 'mesu'
+        else:
+            ti = 'medo'
+        code = code.lstrip()
+        pr = pr.lstrip()
+        pr = int(float(pr))
+        qt = qt.strip(' \n')
+        res.append(dict({
+            'date':da,
+            'time':tim,
+            ti:ti,
+            'code':code,
+            'price':format(pr,','),
+            'count':qt
+        }))
+    return res
