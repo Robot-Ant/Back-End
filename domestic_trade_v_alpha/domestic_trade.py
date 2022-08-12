@@ -1,7 +1,7 @@
 import requests
 import json
-import datetime
 import yaml
+import datetime
 import logging
 import math
 import time
@@ -370,7 +370,7 @@ def get_monthly_asset():
                 monthly_data[1]["asset_mas"].append(int(float(data[9])))
     return monthly_data
 
-def get_moving_average(code,index):
+def get_past_moving_average(code,index):
     PATH = "uapi/domestic-stock/v1/trading/inquire-balance"
     URL = f"{URL_BASE}/{PATH}"
     headers = {"Content-Type":"application/json", 
@@ -420,3 +420,11 @@ def get_past_datas(code):
     time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
     return res.json()['output2']
+
+def getTableInfo():
+    nowTime = time.localtime(time.time())
+    now_mon = nowTime.tm_mon
+    now_date = nowTime.tm_mday
+    print(now_mon,'/',now_date,sep=(''))
+
+#getTableInfo()
