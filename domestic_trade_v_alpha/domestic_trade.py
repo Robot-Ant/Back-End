@@ -453,9 +453,9 @@ def getTableInfo():
             continue
         j, ti = ms.split('-')
         if ti == '0':
-            ti = 'mesu'
+            ti = '매수'
         else:
-            ti = 'medo'
+            ti = '매도'
         code = code.lstrip()
         pr = pr.lstrip()
         pr = int(float(pr))
