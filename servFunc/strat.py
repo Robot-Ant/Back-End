@@ -12,20 +12,21 @@ def stop():
     for i in threading.enumerate():
         if i.name == 'vola':
             tmp.stop()
-            return '0'
+            tmp.join()
         if i.name == 'rebal':
             tmp.stop()
-            return '0'
+            tmp.join()
         if i.name == 'vp':
             tmp.stop()
-            return '0'
+            tmp.join()
         if i.name == 'mas':
             tmp.stop()
-            return '0'
-    return '-1'
+            tmp.join()
+    return '0'
 
 @blue_switch.route('/vola')
 def selectVola():
+    strategies.allsell()
     stop()
     vo = Vola(name='vola')
     vo.start()
@@ -35,6 +36,7 @@ def selectVola():
 
 @blue_switch.route('/rebal')
 def selectRebal():
+    strategies.allsell()
     stop()
     re = Rebal(name='rebal')
     re.start()
@@ -45,6 +47,7 @@ def selectRebal():
 
 @blue_switch.route('/vp')
 def selectVP():
+    strategies.allsell()
     stop()
     vp = Vp(name='vp')
     vp.start()
@@ -54,6 +57,7 @@ def selectVP():
 
 @blue_switch.route('/mas')
 def selectMoveAve():
+    strategies.allsell()
     stop()
     mas = Mas(name='mas')
     mas.start()
