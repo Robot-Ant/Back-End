@@ -270,8 +270,11 @@ class Mas(threading.Thread):
         
                     # sell
                     if sym in stock_dict.keys() and sym in bought_list:
-                        stock, i = api.get_stock_balance(False)
-                        stock = stock[sym]
+                        try:
+                            stock, i = api.get_stock_balance(False)
+                            stock = stock[sym]
+                        except:
+                            pass
                         if current_price > bollinger[0]+bollinger[1]*2:
                             result = api.sell(sym,int(stock['hldg_qty']))
                             if result:

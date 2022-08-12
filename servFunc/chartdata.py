@@ -6,7 +6,20 @@ blue_chart = Blueprint('chartdata', __name__, url_prefix='/chart')
 def getAssetvolatility():
     nowTime = datetime.now()
     returnDate = calDate(now=nowTime)
-    returnAsset = [424362340, 423431630, 416425430, 461829440, 400029320, 390249130, 300495120]
+    returnAsset = []
+    tempAsset = []
+    templine = ''
+    with open('Daily Record.p','r') as file:
+        while True:
+            line = file.readline()
+            if line == '':
+                break
+            temp = line.split('-')
+            temp[3] = temp[3].rstrip('\n')
+            if line != templine:
+                templine = line
+                tempAsset.append(temp[3])
+                returnAsset = tempAsset[::-1]
     res = dict({'title':'자산 변화 차트', 'date':returnDate, 'asset':returnAsset})
     return res
 

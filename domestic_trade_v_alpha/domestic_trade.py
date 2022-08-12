@@ -228,7 +228,7 @@ def sell(code, qty):
     res = requests.post(URL, headers=headers, data=json.dumps(data))
     if res.json()['rt_cd'] == '0':
         send_message(f"[매도 성공]{str(res.json())}")
-        logger.info(f"0, {code}, {get_current_price(code)}, {qty}")
+        logger.info(f"1, {code}, {get_current_price(code)}, {qty}")
         return True
     else:
         send_message(f"[매도 실패]{str(res.json())}")
@@ -463,7 +463,7 @@ def getTableInfo():
         res.append(dict({
             'date':da,
             'time':tim,
-            ti:ti,
+            'order_type':ti,
             'code':code,
             'price':format(pr,','),
             'count':qt
