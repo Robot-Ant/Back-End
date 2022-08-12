@@ -26,8 +26,8 @@ def stop():
 
 @blue_switch.route('/vola')
 def selectVola():
-    strategies.allsell()
     stop()
+    strategies.allsell()
     vo = Vola(name='vola')
     vo.start()
     global tmp
@@ -36,8 +36,8 @@ def selectVola():
 
 @blue_switch.route('/rebal')
 def selectRebal():
-    strategies.allsell()
     stop()
+    strategies.allsell()
     re = Rebal(name='rebal')
     re.start()
     global tmp
@@ -47,8 +47,8 @@ def selectRebal():
 
 @blue_switch.route('/vp')
 def selectVP():
-    strategies.allsell()
     stop()
+    strategies.allsell()
     vp = Vp(name='vp')
     vp.start()
     global tmp
@@ -57,8 +57,8 @@ def selectVP():
 
 @blue_switch.route('/mas')
 def selectMoveAve():
-    strategies.allsell()
     stop()
+    strategies.allsell()
     mas = Mas(name='mas')
     mas.start()
     global tmp
