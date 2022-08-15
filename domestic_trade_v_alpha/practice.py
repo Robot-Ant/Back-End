@@ -1,5 +1,4 @@
 from domestic_trade_v_alpha import domestic_trade as api
-import math
 
 
 # volatility_breakthrough

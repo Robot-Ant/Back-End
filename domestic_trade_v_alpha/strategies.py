@@ -54,7 +54,7 @@ class Vola(threading.Thread):
                             stock, i = api.get_stock_balance(False)
                             stock = stock[sym]
                         except:
-                            pass
+                            continue
                         loss = float(stock['evlu_pfls_rt'])
                         if loss < -STOP_LOSS_RATIO:
                             result = api.sell(sym,int(stock['hldg_qty']))
@@ -204,8 +204,8 @@ class Vp(threading.Thread):
                                     stock_dict,i = api.get_stock_balance(True)
                                     bought_list.remove(sym)
                                     time.sleep(0.11)
-                            except KeyError:
-                                pass
+                            except:
+                                continue
                     
                     # buy
                     elif len(bought_list) < target_buy_count and not(sym in bought_list):

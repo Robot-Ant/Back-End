@@ -3,15 +3,13 @@ from datetime import date
 import json
 import urllib
 from flask import Blueprint, make_response, request, Response, jsonify
-from korStock import stock
-import korStock as kor
 from domestic_trade_v_alpha import domestic_trade, practice
 from datetime import datetime
 #import createModel
 import xml.etree.ElementTree as ET
 
 blue_get = Blueprint('getInfo', __name__, url_prefix='/info')
-info = stock()
+#info = stock()
 
 @blue_get.route('/tabledata')
 def gettabledata():
