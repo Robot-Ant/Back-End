@@ -442,6 +442,7 @@ def getTableInfo():
     mon = '{0:0>2}'.format(mon)
     day = now_time.tm_mday
     current_day = f'{mon}-{day}'
+    reverse_res = []
     #{date:'08-06', time:159, mesu:6.0, code:24, price:4.0, count:5}
     for i in data:
         if i == '':
@@ -468,5 +469,7 @@ def getTableInfo():
             'price':format(pr,','),
             'count':qt
         }))
-        reverse_res = res[::-1]
+    
+    for i in res:
+        reverse_res.append(res[::-1])
     return reverse_res
