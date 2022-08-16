@@ -158,8 +158,9 @@ def get_date_and_earning(corp_code):
                 break
             else:  # 문자열을 숫자로 고침
                 # print('{}년 당기 순이익 : {}원-보고서 제출일:{}'.format(
-                #     k['bsns_year'], k['thstrm_amount'], k['rcept_no'][0:8]))
-                datelist.append(fd['rcept_no'][0:8])
+                #     fd['bsns_year'], fd['thstrm_amount'], fd['thstrm_dt'][13:]))
+                # 2021.01.01 ~ 2021.12.31같은 형식의 날짜 문자열에서 마지막 날짜를 가져옴
+                datelist.append(fd['thstrm_dt'][13:].replace('.', ''))
                 earning = fd['thstrm_amount'].replace(',', '')
                 earning = int(earning)  # 보고서의 어닝
                 earningtmp.append(earning)  # 임시 리스트에 어닝 추가
@@ -178,7 +179,6 @@ def get_date_and_earning(corp_code):
     # 상장된지 4분기 이상 된 기업은 데이터의 마지막 3분기를 버림
     del datelist[-1:-4:-1]
     del earninglist[-1:-4:-1]
-
     date_and_earning = dict(zip(datelist, earninglist))
     return date_and_earning
 
