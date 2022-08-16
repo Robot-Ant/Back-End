@@ -93,6 +93,9 @@ def data_packing():
     asset_rbp = []
     asset_mas = []
     for key, value in vb.items():
+        a = str(key[0:2])
+        b = str(key[2:4])
+        key = f'{a}/{b}'
         date.append(key)
         asset_vb.append(int(value))
     for key, value in rbp.items():
