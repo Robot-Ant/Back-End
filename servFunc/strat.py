@@ -11,13 +11,13 @@ tmp = '' # instance object save
 def exeinfo():
     for i in threading.enumerate():
         if i.name == 'vola':
-            return 'True'
+            return 'vola'
         if i.name == 'rebal':
-            return 'True'
+            return 'rebal'
         if i.name == 'vp':
-            return 'True'
+            return 'vp'
         if i.name == 'mas':
-            return 'True'
+            return 'mas'
     return 'False'
 
 @blue_switch.route('/stop')
