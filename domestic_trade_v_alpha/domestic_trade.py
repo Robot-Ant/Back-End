@@ -89,29 +89,6 @@ def get_current_price(code):
     res = requests.get(URL, headers=headers, params=params)
     return float(res.json()['output']['stck_prpr'])
 
-def get_target_price(code="005930"):
-    """변동성 돌파 전략으로 매수 목표가 조회"""
-    PATH = "uapi/domestic-stock/v1/quotations/inquire-daily-price"
-    URL = f"{URL_BASE}/{PATH}"
-    headers = {"Content-Type":"application/json", 
-        "authorization": f"Bearer {ACCESS_TOKEN}",
-        "appKey":APP_KEY,
-        "appSecret":APP_SECRET,
-        "tr_id":"FHKST01010400"}
-    params = {
-    "fid_cond_mrkt_div_code":"J",
-    "fid_input_iscd":code,
-    "fid_org_adj_prc":"1",
-    "fid_period_div_code":"D"
-    }
-    time.sleep(0.11)
-    res = requests.get(URL, headers=headers, params=params)
-    stck_oprc = float(res.json()['output'][0]['stck_oprc']) #오늘 시가
-    stck_hgpr = float(res.json()['output'][1]['stck_hgpr']) #전일 고가
-    stck_lwpr = float(res.json()['output'][1]['stck_lwpr']) #전일 저가
-    target_price = stck_oprc + (stck_hgpr - stck_lwpr) * 0.5
-    return target_price
-
 def get_stock_balance(message=False):
     """주식 잔고조회"""
     PATH = "uapi/domestic-stock/v1/trading/inquire-balance"
@@ -234,7 +211,7 @@ def sell(code, qty):
         send_message(f"[매도 실패]{str(res.json())}")
         return False
     
-def get_target_price(code):
+def get_target_price(code='005930'):
     """변동성 돌파 전략으로 매수 목표가 조회"""
     PATH = "uapi/domestic-stock/v1/quotations/inquire-daily-price"
     URL = f"{URL_BASE}/{PATH}"
