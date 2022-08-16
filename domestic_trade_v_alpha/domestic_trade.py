@@ -360,36 +360,19 @@ def get_monthly_asset():
                 monthly_data[1]["asset_mas"].append(int(float(data[9])))
     return monthly_data
 
-def get_past_moving_average(code,index):
-    PATH = "uapi/domestic-stock/v1/trading/inquire-balance"
-    URL = f"{URL_BASE}/{PATH}"
-    headers = {"Content-Type":"application/json", 
-        "authorization":f"Bearer {ACCESS_TOKEN}",
-        "appKey":APP_KEY,
-        "appSecret":APP_SECRET,
-        "tr_id":"FHKST01010400",
-        "custtype":"P",
-        "tr_cont":"N"
-    }
-    params = {
-        "fid_cond_mrkt_div_code": "J",
-        "fid_input_iscd": code,
-        "fid_org_adj_prc": "0000000000",
-        "fid_period_div_code": "M"
-    }
-    time.sleep(0.11)
-    res = requests.get(URL, headers=headers, params=params)
-    datas = res.json()['output2']
-    sum = 0
-    sqr_sum = 0
-    for i in range(index,index+20):
-        sum += float(datas[i]['stck_clpr'])
-        sqr_sum += pow(float(datas[i]['stck_clpr']),2)
-    m = sum/20
-    s = math.sqrt(sqr_sum/20 - pow(m,2))
-    return (m,s)
+def get_past_datas(code,since):
+    datas = []
+    t_now = datetime.datetime.now()
+    to = str(t_now.year)+(('0'+str(t_now.month)) if t_now.month < 10 else str(t_now.month)) + (('0'+str(t_now.day)) if t_now.day < 10 else str(t_now.day))
+    while True:
+        datas.append(get_last_100days(code,since,to))
+        to = str(int(datas[len(datas)-1][len(datas[len(datas)-1])-1]['stck_bsop_date'])-1)
+        if int(to) < int(since) or len(datas[len(datas)-1]) < 100:
+            break
+    result = [data for i in datas for data in i ]
+    return result
 
-def get_past_datas(code):
+def get_last_100days(code,past,now):
     PATH = "uapi/domestic-stock/v1/trading/inquire-balance"
     URL = f"{URL_BASE}/{PATH}"
     headers = {"Content-Type":"application/json", 
@@ -401,8 +384,8 @@ def get_past_datas(code):
     }
     params = {
         "fid_cond_mrkt_div_code": "J",
-        "fid_input_date_1": "20220110",
-        "fid_input_date_2": "20220810",
+        "fid_input_date_1": past,
+        "fid_input_date_2": now,
         "fid_input_iscd": code,
         "fid_org_adj_prc": "0",
         "fid_period_div_code": "D" 
@@ -410,6 +393,16 @@ def get_past_datas(code):
     time.sleep(0.11)
     res = requests.get(URL, headers=headers, params=params)
     return res.json()['output2']
+
+def get_past_moving_average(datas,index):
+    sum = 0
+    sqr_sum = 0
+    for i in range(index,index+20):
+        sum += float(datas[i]['stck_clpr'])
+        sqr_sum += pow(float(datas[i]['stck_clpr']),2)
+    m = sum/20
+    s = math.sqrt(sqr_sum/20 - pow(m,2))
+    return (m,s)
 
 def getTableInfo():
     data = getlogdata()

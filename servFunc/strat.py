@@ -11,13 +11,13 @@ tmp = '' # instance object save
 def exeinfo():
     for i in threading.enumerate():
         if i.name == 'vola':
-            return 'vola'
+            return '변동성 돌파'
         if i.name == 'rebal':
-            return 'rebal'
+            return '평균 복원'
         if i.name == 'vp':
-            return 'vp'
+            return '체결강도'
         if i.name == 'mas':
-            return 'mas'
+            return '이평선 괴리율 스윙'
     return 'False'
 
 @blue_switch.route('/stop')
