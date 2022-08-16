@@ -469,7 +469,5 @@ def getTableInfo():
             'price':format(pr,','),
             'count':qt
         }))
-    
-    for i in res:
-        reverse_res.append(res[::-1])
+        reverse_res.append(res[-1])
     return reverse_res
