@@ -72,7 +72,7 @@ companies = {}
 @blue_get.route('/namelist')
 def getcorplist():
 
-    tree = ET.parse('Back-End2/CORPCODE.xml')  # CORPCODE.xml을 파싱하여 tree에 저장
+    tree = ET.parse('CORPCODE.xml')  # CORPCODE.xml을 파싱하여 tree에 저장
     root = tree.getroot()
 
     namelist = []
