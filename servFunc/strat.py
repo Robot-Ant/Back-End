@@ -7,7 +7,7 @@ blue_switch = Blueprint('strategiy switch', __name__, url_prefix='/strat')
 code = strategies.switch()
 tmp = '' # instance object save
 
-@blue_switch('/exeinfo')
+@blue_switch.route('/exeinfo')
 def exeinfo():
     for i in threading.enumerate():
         if i.name == 'vola':
