@@ -66,13 +66,13 @@ def sumevlu(stockInf):
         return -1
 
 
-companies = {}
+companies = {}  # namelist만들면서 {기업이름:[기업코드,종목코드]}형태로 추가
 
 
 @blue_get.route('/namelist')
 def getcorplist():
 
-    tree = ET.parse('CORPCODE.xml')  # CORPCODE.xml을 파싱하여 tree에 저장
+    tree = ET.parse('Back-End2/CORPCODE.xml')  # CORPCODE.xml을 파싱하여 tree에 저장
     root = tree.getroot()
 
     namelist = []
@@ -93,7 +93,7 @@ def getcorplist():
 @blue_get.route('/financedata')
 def getfinancedata():
     name = request.args.get("id")
-    code = companies[name]
+    code = companies[name]  # 전역변수 companies에서 가져온 [기업코드, 종목코드]
     ql, el, pl = get_year_earning_price(corp_code=code[0], stock_code=code[1])
     data = {'title': name, 'year': ql, 'earning': el, 'price': pl}
     print('요청한 데이터', data)
@@ -121,16 +121,17 @@ def getFinanceData(corp_code, reprt_code, year):
     D = RLT.read().decode('utf-8')
     D1 = json.loads(D)  # 딕셔너리
     if(D1['status'] == '013'):  # 조회된 데이터가 없는 status
-        if(year == curyear-1):
+        if(year == str(curyear)):
             return 'continue'  # 3월쯤에 사업보고서가 올라오는데 2월같은때 조회하면 건너뜀
         else:
             return 'none'  # 최근년도부터 거슬러올라가다가 자료가 없으면 멈춤
 
     reslist = D1['list']  # 딕셔너리에서 'list'란 키를 키로 가지는 value 리스트
-
-    # 연결재무제표에서 당기순이익 계정 가져오기- CFS:연결재무제표,   account_nm:계정명
+    # 연결재무제표를 우선해서 당기순이익 계정 가져오기- CFS:연결재무제표,   account_nm:계정명
     for i in reslist:
         if(i['account_nm'] == '당기순이익' and i['fs_div'] == 'CFS'):
+            if(i['thstrm_amount'] == '-'):
+                continue
             return i
     for i in reslist:
         if(i['account_nm'] == '당기순이익' and i['fs_div'] == 'OFS'):
@@ -151,7 +152,6 @@ def get_date_and_earning(corp_code):
             fdlist = []
             fd = getFinanceData(year=year, corp_code=corp_code, reprt_code=j)
             fdlist.append(fd)
-
             if fd == 'continue':
                 continue
             elif fd == 'none':
@@ -168,8 +168,10 @@ def get_date_and_earning(corp_code):
         # 사업보고서는 1년 어닝이 들어있고 나머지는 3개월 어닝이 들어있기 때문에 사업보고서의 어닝을 3개월로 고침
         if len(earningtmp) == 4:  # 사업보고서가 없는 해는 길이가 3이하이기 때문에 고칠필요가 없음
             earningtmp[0] = earningtmp[0]-(sum(earningtmp[1:4]))
-        if len(earningtmp) == 4 and year != curyear-1:  # 보고서가 4개가 안되고 현재 년도가 아닌 년도는 버림
+        if len(earningtmp) == 4:  # 보고서가 4개가 안되고 현재 년도가 아닌 년도는 버림
             earninglist = earninglist+earningtmp  # 어닝리스트에 결합하기
+        elif year == curyear:
+            earninglist = earninglist+earningtmp
     if len(earninglist) > 3:
         for i in range(0, len(earninglist)-3):
             earninglist[i] = earninglist[i]+sum(earninglist[i+1:i+4])
@@ -179,8 +181,10 @@ def get_date_and_earning(corp_code):
     # 상장된지 4분기 이상 된 기업은 데이터의 마지막 3분기를 버림
     del datelist[-1:-4:-1]
     del earninglist[-1:-4:-1]
+    print(earninglist)
     date_and_earning = dict(zip(datelist, earninglist))
     return date_and_earning
+
 
 
 URL_BASE = 'https://openapivts.koreainvestment.com:29443'
@@ -236,7 +240,7 @@ def get_price_by_date(code='', date=''):
     dateformat = '%Y-%m-%d'  # 날짜의 형식을 지정
     # 형식에 맞는 문자열을 형식에 맞는 date타입으로 바꿈
     formatdate = datetime.strptime(datestring, dateformat)
-    enddate = formatdate+relativedelta(weeks=1)  # date타입 변수의 1주일 뒤 날짜를 구함
+    enddate = formatdate+relativedelta(weeks=2)  # date타입 변수의 1주일 뒤 날짜를 구함
     enddate = str(enddate)[0:10]
     enddate = enddate.replace('-', '')  # date타입 변수를 20220108같은 문자열로 바꿈
     headers = {"Content-Type": "application/json; charset=utf-8",
@@ -299,9 +303,8 @@ def get_year_earning_price(corp_code='', stock_code=''):
     epslist.reverse()
     stprlist.reverse()
     return quarterlist, epslist, stprlist
+    # 잘나오는거 카카오 예스24
 
-    # 잘나오는거 롯데케미칼 카카오
-    # JTC는 시연하면 안됨
 
 # -eps(당기순이익/발행주식수)와 주가의 흐름을 비교해볼 수 있는 차트입니다
 
