@@ -47,7 +47,6 @@ class Vola(threading.Thread):
                     bought_list.remove(sym)
             if t_start < t_now < t_sell :  # AM 09:05 ~ PM 03:15 : 매수
                 for sym in self.symbol_list:  
-
                     # sell
                     if sym in stock_dict.keys() and sym in bought_list:
                         try:
@@ -65,18 +64,21 @@ class Vola(threading.Thread):
                     
                     # buy
                     elif len(bought_list) < target_buy_count and not(sym in bought_list) :
-                        target_price = api.get_target_price(sym)
-                        current_price = api.get_current_price(sym)
-                        if target_price < current_price:
-                            buy_qty = 0  # 매수할 수량 초기화
-                            buy_qty = buy_amount//current_price
-                            if buy_qty > 0:
-                                api.send_message(f"{sym} 목표가 달성({target_price} < {current_price}) 매수를 시도합니다.")
-                                result = api.buy(sym, buy_qty)
-                                if result:
-                                    stock_dict, i = api.get_stock_balance(True)
-                                    bought_list.append(sym)
-                                    time.sleep(0.11)
+                        try:
+                            target_price = api.get_target_price(sym)
+                            current_price = api.get_current_price(sym)
+                            if target_price < current_price:
+                                buy_qty = 0  # 매수할 수량 초기화
+                                buy_qty = buy_amount//current_price
+                                if buy_qty > 0:
+                                    api.send_message(f"{sym} 목표가 달성({target_price} < {current_price}) 매수를 시도합니다.")
+                                    result = api.buy(sym, buy_qty)
+                                    if result:
+                                        stock_dict, i = api.get_stock_balance(True)
+                                        bought_list.append(sym)
+                                        time.sleep(0.11)
+                        except:
+                            continue            
                 if t_now.minute %30 == 0 and t_now.second <= 5: 
                     api.get_stock_balance(True)
                     time.sleep(5)
