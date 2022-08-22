@@ -2,6 +2,7 @@ from flask import Flask
 from servFunc import stockInfo
 from servFunc import strat
 from servFunc import chartdata
+
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 

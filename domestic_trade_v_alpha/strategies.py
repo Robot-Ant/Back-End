@@ -22,15 +22,15 @@ class Vola(threading.Thread):
 
     def run(self):
         total_cash = float(api.get_balance(True)) # 보유 현금 조회
-        stock_dict, i = api.get_stock_balance(True) # 보유 주식 조회
         target_buy_count = 3 # 매수할 종목 수
         buy_amount = total_cash / target_buy_count  # 종목별 주문 금액 계산
         bought_list = []
-        for sym in stock_dict.keys():
-            bought_list.append(sym)
         STOP_LOSS_RATIO = 2
 
         while self.flag:
+            stock_dict,i = api.get_stock_balance(False) # 보유 주식 조회
+            for sym in stock_dict.keys():
+                bought_list.append(sym)
             t_now = datetime.datetime.now()
             t_9 = t_now.replace(hour=9, minute=0, second=0, microsecond=0)
             t_start = t_now.replace(hour=9, minute=5, second=0, microsecond=0)
@@ -106,12 +106,12 @@ class Rebal(threading.Thread):
     def run(self):
         symbol = "409820"
         total_asset = float(api.get_evaluation()[0]['nass_amt']) # 보유 현금 조회
-        stock_dict, i = api.get_stock_balance(True) # 보유 주식 조회
         bought_list = []
-        for sym in stock_dict.keys():
-            bought_list.append(sym)
 
         while self.flag:
+            stock_dict,i = api.get_stock_balance(False) # 보유 주식 조회
+            for sym in stock_dict.keys():
+                bought_list.append(sym)
             t_now = datetime.datetime.now()
             t_9 = t_now.replace(hour=9, minute=0, second=0, microsecond=0)
             t_exit = t_now.replace(hour=15, minute=20, second=0,microsecond=0)
@@ -174,14 +174,15 @@ class Vp(threading.Thread):
 
     def run(self):
         total_cash = float(api.get_balance(True)) # 보유 현금 조회
-        stock_dict, i = api.get_stock_balance(True) # 보유 주식 조회
         target_buy_count = 3 # 매수할 종목 수
         buy_amount = total_cash / target_buy_count  # 종목별 주문 금액 계산
         bought_list = []
-        for sym in stock_dict.keys():
-            bought_list.append(sym)
 
         while self.flag:
+
+            stock_dict,i = api.get_stock_balance(False) # 보유 주식 조회
+            for sym in stock_dict.keys():
+                bought_list.append(sym)
             t_now = datetime.datetime.now()
             t_9 = t_now.replace(hour=9, minute=0, second=0, microsecond=0)
             t_sell = t_now.replace(hour=15, minute=15, second=0, microsecond=0)
@@ -249,15 +250,15 @@ class Mas(threading.Thread):
     
     def run(self):      
         total_cash = float(api.get_balance(True)) # 보유 현금 조회
-        stock_dict,i = api.get_stock_balance(True) # 보유 주식 조회
         target_buy_count = 3 # 매수할 종목 수
         buy_amount = total_cash / target_buy_count  # 종목별 주문 금액 계산
         bought_list = []
-        for sym in stock_dict.keys():
-            bought_list.append(sym)
         STOP_LOSS_RATIO = 10
 
         while self.flag:
+            stock_dict,i = api.get_stock_balance(False) # 보유 주식 조회
+            for sym in stock_dict.keys():
+                bought_list.append(sym)
             t_now = datetime.datetime.now()
             t_9 = t_now.replace(hour=9, minute=0, second=0, microsecond=0)
             t_exit = t_now.replace(hour=15, minute=20, second=0,microsecond=0)

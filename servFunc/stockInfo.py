@@ -72,7 +72,7 @@ companies = {}  # namelist만들면서 {기업이름:[기업코드,종목코드]
 @blue_get.route('/namelist')
 def getcorplist():
 
-    tree = ET.parse('Back-End2/CORPCODE.xml')  # CORPCODE.xml을 파싱하여 tree에 저장
+    tree = ET.parse('CORPCODE.xml')  # CORPCODE.xml을 파싱하여 tree에 저장
     root = tree.getroot()
 
     namelist = []
@@ -96,7 +96,6 @@ def getfinancedata():
     code = companies[name]  # 전역변수 companies에서 가져온 [기업코드, 종목코드]
     ql, el, pl = get_year_earning_price(corp_code=code[0], stock_code=code[1])
     data = {'title': name, 'year': ql, 'earning': el, 'price': pl}
-    print('요청한 데이터', data)
     return data
 
 
